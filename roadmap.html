@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roadmap</title>
+  <style>
+    :root {
+      --crust: #11111b;
+      --mantle: #181825;
+      --base: #1e1e2e;
+      --surface0: #313244;
+      --surface1: #45475a;
+      --surface2: #585b70;
+      --overlay2: #9399b2;
+      --subtext: #a6adc8;
+      --text: #cdd6f4;
+      --mauve: #cba6f7;
+      --green: #a6e3a1;
+      --peach: #fab387;
+      --sky: #89dceb;
+      --yellow: #f9e2af;
+      --mono: ui-monospace, Consolas, "Cascadia Mono", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--crust);
+      color: var(--text);
+      font: 1rem/1.4 Inter, system-ui, -apple-system, sans-serif;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      background: var(--mantle);
+      border-bottom: 0.0625rem solid var(--surface0);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      min-width: 0;
+    }
+
+    h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .source {
+      padding: 0.125rem 0.5rem;
+      border: 0.0625rem solid rgba(166, 227, 161, 0.3);
+      border-radius: 0.375rem;
+      background: rgba(166, 227, 161, 0.15);
+      color: var(--green);
+      font: 1rem var(--mono);
+      white-space: nowrap;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.375rem;
+    }
+
+    button,
+    select,
+    .file {
+      padding: 0.25rem 0.75rem;
+      border: 0.0625rem solid var(--surface0);
+      border-radius: 0.5rem;
+      background: var(--base);
+      color: var(--text);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    button:hover,
+    select:hover,
+    .file:hover {
+      background: var(--surface0);
+    }
+
+    button[aria-pressed="true"] {
+      border-color: var(--mauve);
+      color: var(--mauve);
+    }
+
+    .file input {
+      display: none;
+    }
+
+    main {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.5rem;
+    }
+
+    #canvas-wrapper {
+      position: relative;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      border: 0.0625rem solid var(--surface0);
+      border-radius: 0.75rem;
+      user-select: none;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+      touch-action: none;
+    }
+
+    canvas.dragging {
+      cursor: grabbing;
+    }
+
+    #empty {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 2rem;
+      color: var(--subtext);
+      font-size: 1.125rem;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    #inspector {
+      width: 26rem;
+      flex-shrink: 0;
+      overflow-y: auto;
+      padding: 1rem;
+      border: 0.0625rem solid var(--surface0);
+      border-radius: 0.75rem;
+      background: var(--base);
+    }
+
+    #hover-card {
+      position: absolute;
+      z-index: 2;
+      width: 32rem;
+      max-width: 90%;
+      padding: 1rem;
+      border: 0.125rem solid rgba(203, 166, 247, 0.6);
+      border-radius: 0.75rem;
+      background: rgba(24, 24, 37, 0.97);
+      box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.5);
+      pointer-events: none;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding-bottom: 0.5rem;
+      margin-bottom: 0.75rem;
+      border-bottom: 0.0625rem solid var(--surface0);
+    }
+
+    .badge {
+      padding: 0.125rem 0.5rem;
+      border: 0.0625rem solid currentColor;
+      border-radius: 0.375rem;
+      font: 700 1rem var(--mono);
+      white-space: nowrap;
+    }
+
+    .line-ref {
+      color: var(--subtext);
+      font: 1rem var(--mono);
+      white-space: nowrap;
+    }
+
+    .card h2 {
+      margin-bottom: 0.5rem;
+      font-size: 1.125rem;
+      line-height: 1.35;
+    }
+
+    .card p {
+      margin-bottom: 0.75rem;
+      color: var(--subtext);
+    }
+
+    .card h3 {
+      margin: 0.75rem 0 0.375rem;
+      color: var(--subtext);
+      font-size: 1rem;
+    }
+
+    .item {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.375rem;
+      padding: 0.375rem 0.5rem;
+      border: 0.0625rem solid var(--surface0);
+      border-radius: 0.375rem;
+      background: var(--crust);
+    }
+
+    .box {
+      flex-shrink: 0;
+      font-family: var(--mono);
+    }
+
+    .link {
+      display: block;
+      width: 100%;
+      margin-bottom: 0.375rem;
+      text-align: left;
+      background: var(--crust);
+    }
+
+    .link .box {
+      font-weight: 700;
+      margin-right: 0.5rem;
+    }
+
+    .card code {
+      color: var(--yellow);
+      font-family: var(--mono);
+    }
+
+    .card a {
+      color: var(--mauve);
+    }
+
+    .s-done {
+      color: var(--green);
+    }
+
+    .s-active {
+      color: var(--mauve);
+    }
+
+    .s-open {
+      color: var(--peach);
+    }
+
+    .s-note {
+      color: var(--sky);
+    }
+
+    .s-none {
+      color: var(--overlay2);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <h1 id="title">Roadmap</h1>
+      <span id="source" class="source">no file</span>
+    </div>
+    <div class="controls">
+      <select id="filter" aria-label="Filter">
+        <option value="all">All</option>
+        <option value="open">Open and active</option>
+        <option value="done">Done</option>
+        <option value="gates">Gates and branches</option>
+      </select>
+      <button id="focus" type="button">Focus active</button>
+      <button id="fit" type="button">Fit width</button>
+      <button id="branches" type="button" aria-pressed="true">Branches</button>
+      <button id="inspector-toggle" type="button" aria-pressed="true">Inspector</button>
+      <label class="file">Open file<input id="file" type="file" accept=".md,.markdown,.txt"></label>
+    </div>
+  </header>
+
+  <main>
+    <div id="canvas-wrapper">
+      <canvas id="canvas"></canvas>
+      <div id="hover-card" class="card hidden"></div>
+      <div id="empty" class="hidden">
+        <div>Drop a markdown file here, or open one with Open file.</div>
+        <div>Only list items with a marker such as <code>[#step:1]</code> show up.</div>
+      </div>
+    </div>
+    <aside id="inspector" class="card"></aside>
+  </main>
+
+  <script id="roadmap-source" type="text/markdown"></script>
+
+  <script>
+    const SPINE_X = 40;
+    const SPINE_W = 600;
+    const BRANCH_X = 700;
+    const BRANCH_W = 560;
+    const WORLD_W = BRANCH_X + BRANCH_W + 40;
+    const NODE_PAD = 14;
+    const BADGE_H = 28;
+    const TITLE_LINE_H = 24;
+    const PILL_H = 28;
+    const PILL_GAP = 8;
+    const PILL_MAX_W = 280;
+    const HINT_H = 24;
+    const BRANCH_GAP = 16;
+    const STEP_GAP = 36;
+    const GATE_H = 32;
+    const GRID_STEP = 36;
+    const MIN_ZOOM = 0.3;
+    const MAX_ZOOM = 2;
+    const CLICK_SLOP = 5;
+    const MONO = 'ui-monospace, Consolas, "Cascadia Mono", monospace';
+    const SANS = "Inter, system-ui, -apple-system, sans-serif";
+    const FONT_BADGE = `bold 16px ${MONO}`;
+    const FONT_TAG = `16px ${MONO}`;
+    const FONT_TITLE = `bold 18px ${SANS}`;
+    const FONT_PILL = `16px ${MONO}`;
+    const FONT_HINT = `16px ${SANS}`;
+    const COLORS = {
+      crust: "#11111b",
+      mantle: "#181825",
+      base: "#1e1e2e",
+      grid: "#181825",
+      surface0: "#313244",
+      surface1: "#45475a",
+      surface2: "#585b70",
+      subtext: "#a6adc8",
+      text: "#cdd6f4",
+      done: "#a6e3a1",
+      active: "#cba6f7",
+      task: "#fab387",
+      note: "#89dceb",
+      step: "#9399b2",
+      gate: "#f9e2af",
+      noteFill: "#15202b",
+      noteFillHover: "#1a2837",
+      noteFillSelected: "#1d2d3e",
+      fillHover: "#232336",
+      fillSelected: "#262639",
+    };
+    const BOXES = { done: "[x]", active: "[~]", open: "[ ]", note: "[i]", none: "-" };
+    const DEFAULT_CODES = { task: "Task", note: "Note" };
+    const MARKER = /`?\[#(step|task|note|before|after):([\w.-]+)(?:>([\w.-]+))?\]`?/i;
+    const LIST_ITEM = /^(\s*)(?:[-*+]|\d+[.)])\s+(?:\[([ xX~])\]\s+)?(.*)$/;
+    const HEADING = /^(#{1,6})\s+(.*?)\s*#*\s*$/;
+    const FENCE = /^\s*(```|~~~)/;
+    const SAFE_HREF = /^(https?:\/\/|mailto:|#|[^:]*$)/i;
+
+    let roadmap = { title: "Roadmap", sequence: [], nodes: [] };
+    let nodesById = new Map();
+    let layout = { boxes: [], edges: [], gates: [], height: 0 };
+    let selectedId = null;
+    let hoveredId = null;
+    let showBranches = true;
+    let camX = 0;
+    let camY = 0;
+    let zoom = 1;
+    let drag = null;
+
+    function boot() {
+      const source = document.getElementById("roadmap-source");
+      const embedded = source.textContent
+        .replace(/^\r?\n/, "")
+        .replace(/<\\\/(script)/gi, "</$1")
+        .replace(/<\\!--/g, "<!--");
+      bindControls();
+      bindCanvas();
+      showRoadmap(embedded, embedded.trim() ? source.dataset.name || "embedded" : "");
+    }
+
+    function showRoadmap(text, name) {
+      roadmap = parseRoadmap(text);
+      nodesById = new Map(roadmap.nodes.map(node => [node.id, node]));
+      selectedId = null;
+      hoveredId = null;
+      document.getElementById("title").textContent = roadmap.title;
+      document.getElementById("source").textContent = name || "no file";
+      document.title = roadmap.title;
+      document.getElementById("empty").classList.toggle("hidden", roadmap.sequence.length > 0);
+      resizeCanvas();
+      focusActive();
+    }
+
+    function parseRoadmap(text) {
+      const nodes = [];
+      const placements = [];
+      const headings = [];
+      const open = [];
+      let title = "";
+      let inFence = false;
+      text.split(/\r?\n/).forEach((line, index) => {
+        if (FENCE.test(line)) {
+          inFence = !inFence;
+          return;
+        }
+        if (inFence || !line.trim()) return;
+        const heading = line.match(HEADING);
+        if (heading) {
+          const level = heading[1].length;
+          if (!title && level === 1) title = cleanText(heading[2]);
+          while (headings.length && headings[headings.length - 1].level >= level) headings.pop();
+          headings.push({ level, marker: readMarker(heading[2]) });
+          open.length = 0;
+          return;
+        }
+        const item = line.match(LIST_ITEM);
+        if (!item) {
+          if (!/^\s/.test(line)) open.length = 0;
+          return;
+        }
+        const indent = measureIndent(item[1]);
+        while (open.length && open[open.length - 1].indent >= indent) open.pop();
+        const parent = open[open.length - 1];
+        const marker = readMarker(item[3]) || (parent ? null : findHeadingMarker(headings));
+        if (marker) {
+          const node = createNode(marker, item[2], item[3], index + 1, nodes.length);
+          nodes.push(node);
+          placements.push({ marker, node });
+          open.push({ indent, owner: node, depth: -1 });
+          return;
+        }
+        const owner = parent ? parent.owner : null;
+        const depth = parent ? parent.depth + 1 : 0;
+        if (owner) owner.items.push({ text: item[3], status: readStatus(item[2], "none"), depth });
+        open.push({ indent, owner, depth });
+      });
+      return { title: title || "Roadmap", sequence: arrangeSequence(placements), nodes };
+    }
+
+    function arrangeSequence(placements) {
+      const steps = placements.filter(p => p.marker.kind === "step").map(p => p.node);
+      const stepsByKey = new Map();
+      for (const step of steps) {
+        if (!stepsByKey.has(step.key)) stepsByKey.set(step.key, step);
+      }
+      const gates = new Map();
+      const addToGate = (gateKey, label, node) => {
+        if (!gates.has(gateKey)) gates.set(gateKey, { type: "gate", label, items: [] });
+        gates.get(gateKey).items.push(node);
+      };
+      for (const { marker, node } of placements) {
+        if (marker.kind === "step") continue;
+        const step = stepsByKey.get(marker.key);
+        if (marker.kind === "task" || marker.kind === "note") {
+          if (step) step.branches.push(node);
+          else addToGate(`missing:${marker.key}`, `Missing step ${marker.key}`, node);
+          continue;
+        }
+        const side = marker.kind === "before" ? "Before" : "After";
+        addToGate(`${marker.kind}:${marker.key}`, `${side} ${step ? step.code : marker.key}`, node);
+      }
+      const sequence = [];
+      const takeGate = gateKey => {
+        const gate = gates.get(gateKey);
+        if (!gate) return;
+        gates.delete(gateKey);
+        sequence.push(gate);
+      };
+      for (const step of steps) {
+        const first = stepsByKey.get(step.key) === step;
+        if (first) takeGate(`before:${step.key}`);
+        sequence.push({ type: "step", node: step });
+        if (first) takeGate(`after:${step.key}`);
+      }
+      sequence.push(...gates.values());
+      return sequence;
+    }
+
+    function createNode(marker, box, text, line, index) {
+      const kind = marker.kind === "step" || marker.kind === "note" ? marker.kind : "task";
+      const parts = splitItemText(text, marker.token);
+      return {
+        id: `n${index}`,
+        kind,
+        key: marker.key,
+        feedKey: marker.feed,
+        code: parts.code || DEFAULT_CODES[kind] || `Step ${marker.key}`,
+        title: parts.title,
+        body: parts.body,
+        status: kind === "note" ? "note" : readStatus(box, "open"),
+        line,
+        items: [],
+        branches: [],
+      };
+    }
+
+    function splitItemText(text, token) {
+      const at = token ? text.indexOf(token) : -1;
+      const marked = at < 0 ? text : `${text.slice(0, at)}\u0000${text.slice(at + token.length)}`;
+      const bold = marked.match(/^\*\*(.+?)\*\*(.*)$/);
+      let lead = bold ? bold[1] : marked;
+      let body = bold ? bold[2] : "";
+      let code = "";
+      const cut = lead.indexOf("\u0000");
+      if (cut >= 0) {
+        const before = lead.slice(0, cut);
+        const after = lead.slice(cut + 1);
+        if (/^\s*:/.test(after)) {
+          code = cleanText(before);
+          lead = after;
+        } else {
+          lead = `${before}${after}`.replace(/\(\s+/g, "(").replace(/\s{2,}/g, " ");
+        }
+      }
+      let title = lead.replace(/^[\s:]+|[\s:]+$/g, "");
+      body = body.replace(/^[\s:]+/, "").trim();
+      if (!title) [title, body] = [body, ""];
+      if (!title) [title, code] = [code, ""];
+      return { code, title, body };
+    }
+
+    function readMarker(text) {
+      const match = text.match(MARKER);
+      if (!match) return null;
+      return {
+        token: match[0],
+        kind: match[1].toLowerCase(),
+        key: match[2].toLowerCase(),
+        feed: match[3] ? match[3].toLowerCase() : "",
+      };
+    }
+
+    function findHeadingMarker(headings) {
+      for (let i = headings.length - 1; i >= 0; i--) {
+        const marker = headings[i].marker;
+        if (marker && marker.kind !== "step") return { ...marker, token: "" };
+      }
+      return null;
+    }
+
+    function readStatus(box, fallback) {
+      if (box === undefined) return fallback;
+      if (box === "x" || box === "X") return "done";
+      if (box === "~") return "active";
+      return "open";
+    }
+
+    function measureIndent(whitespace) {
+      return whitespace.replace(/\t/g, "    ").length;
+    }
+
+    function buildLayout() {
+      const ctx = document.getElementById("canvas").getContext("2d");
+      const filter = document.getElementById("filter").value;
+      layout = { boxes: [], edges: [], gates: [], height: 0 };
+      const stepBoxes = new Map();
+      const feeds = [];
+      let y = 32;
+      let previous = null;
+      for (const entry of roadmap.sequence) {
+        if (entry.type === "gate") {
+          const items = filterByStatus(entry.items, filter);
+          if (!items.length) continue;
+          layout.gates.push({ y: y + GATE_H / 2, label: entry.label });
+          y += GATE_H + 16;
+          for (let i = 0; i < items.length; i += 2) {
+            const left = placeBox(ctx, items[i], SPINE_X, y, SPINE_W, []);
+            const right = items[i + 1] ? placeBox(ctx, items[i + 1], BRANCH_X, y, BRANCH_W, []) : left;
+            y += Math.max(left.h, right.h) + BRANCH_GAP;
+          }
+          y += STEP_GAP - BRANCH_GAP;
+          continue;
+        }
+        const step = entry.node;
+        const branches = filterByStatus(step.branches, filter);
+        if (!isStepVisible(step, branches, filter)) continue;
+        const pills = filterByStatus(step.items.filter(item => item.depth === 0), filter);
+        const box = placeBox(ctx, step, SPINE_X, y, SPINE_W, pills);
+        if (!stepBoxes.has(step.key)) stepBoxes.set(step.key, box);
+        if (previous) layout.edges.push({ from: previous, to: box, kind: "spine" });
+        previous = box;
+        let bottom = box.y + box.h;
+        if (showBranches) {
+          let branchY = y;
+          for (const branch of branches) {
+            const child = placeBox(ctx, branch, BRANCH_X, branchY, BRANCH_W, []);
+            layout.edges.push({ from: box, to: child, kind: branch.kind === "note" ? "note" : "branch" });
+            if (branch.feedKey) feeds.push(child);
+            branchY += child.h + BRANCH_GAP;
+            bottom = Math.max(bottom, child.y + child.h);
+          }
+        }
+        y = bottom + STEP_GAP;
+      }
+      for (const from of feeds) {
+        const to = stepBoxes.get(from.node.feedKey);
+        if (to) layout.edges.push({ from, to, kind: "feed" });
+      }
+      layout.height = y;
+    }
+
+    function placeBox(ctx, node, x, y, w, pills) {
+      ctx.font = FONT_TITLE;
+      const titleLines = wrapLines(ctx, cleanText(node.title), w - 2 * NODE_PAD, 2);
+      const titleTop = y + NODE_PAD + BADGE_H + 10;
+      let cursor = titleTop + titleLines.length * TITLE_LINE_H;
+      const pillBoxes = [];
+      if (pills.length) {
+        ctx.font = FONT_PILL;
+        cursor += PILL_GAP;
+        let px = x + NODE_PAD;
+        for (const item of pills) {
+          const label = `${BOXES[item.status]} ${readPillLabel(item.text)}`;
+          const pw = Math.min(ctx.measureText(label).width + 16, PILL_MAX_W, w - 2 * NODE_PAD);
+          if (px > x + NODE_PAD && px + pw > x + w - NODE_PAD) {
+            px = x + NODE_PAD;
+            cursor += PILL_H + PILL_GAP;
+          }
+          pillBoxes.push({ x: px, y: cursor, w: pw, label, status: item.status });
+          px += pw + PILL_GAP;
+        }
+        cursor += PILL_H;
+      }
+      const hint = !pills.length && node.items.length ? formatHint(node.items.length) : "";
+      if (hint) cursor += 8 + HINT_H;
+      const box = { node, x, y, w, h: cursor + NODE_PAD - y, titleTop, titleLines, pills: pillBoxes, hint };
+      layout.boxes.push(box);
+      return box;
+    }
+
+    function isStepVisible(step, branches, filter) {
+      if (filter === "open") return step.status !== "done" || branches.length > 0;
+      if (filter === "done") return step.status === "done" || branches.length > 0;
+      if (filter === "gates") return branches.length > 0;
+      return true;
+    }
+
+    function filterByStatus(list, filter) {
+      if (filter === "open") return list.filter(entry => entry.status === "open" || entry.status === "active");
+      if (filter === "done") return list.filter(entry => entry.status === "done");
+      return list;
+    }
+
+    function drawCanvas() {
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
+      const dpr = window.devicePixelRatio || 1;
+      const w = canvas.width / dpr;
+      const h = canvas.height / dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.fillStyle = COLORS.crust;
+      ctx.fillRect(0, 0, w, h);
+      drawGrid(ctx, w, h);
+      ctx.translate(camX * zoom, camY * zoom);
+      ctx.scale(zoom, zoom);
+      ctx.textBaseline = "middle";
+      layout.edges.forEach(edge => drawEdge(ctx, edge));
+      layout.gates.forEach(gate => drawGate(ctx, gate));
+      layout.boxes.forEach(box => drawBox(ctx, box));
+    }
+
+    function drawGrid(ctx, w, h) {
+      const step = GRID_STEP * zoom;
+      const offX = ((camX * zoom) % step + step) % step;
+      const offY = ((camY * zoom) % step + step) % step;
+      ctx.strokeStyle = COLORS.grid;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let gx = offX; gx < w; gx += step) {
+        ctx.moveTo(gx, 0);
+        ctx.lineTo(gx, h);
+      }
+      for (let gy = offY; gy < h; gy += step) {
+        ctx.moveTo(0, gy);
+        ctx.lineTo(w, gy);
+      }
+      ctx.stroke();
+    }
+
+    function drawGate(ctx, gate) {
+      ctx.save();
+      ctx.strokeStyle = COLORS.gate;
+      ctx.lineWidth = 2;
+      ctx.setLineDash([12, 6]);
+      ctx.beginPath();
+      ctx.moveTo(20, gate.y);
+      ctx.lineTo(WORLD_W - 20, gate.y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.font = FONT_BADGE;
+      const tw = ctx.measureText(gate.label).width + 28;
+      const bx = WORLD_W / 2 - tw / 2;
+      traceRoundRect(ctx, bx, gate.y - GATE_H / 2, tw, GATE_H, GATE_H / 2);
+      ctx.fillStyle = COLORS.mantle;
+      ctx.fill();
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.fillStyle = COLORS.gate;
+      ctx.fillText(gate.label, bx + 14, gate.y);
+      ctx.restore();
+    }
+
+    function drawEdge(ctx, edge) {
+      const { from, to, kind } = edge;
+      ctx.save();
+      ctx.strokeStyle = readEdgeColor(edge);
+      ctx.lineWidth = kind === "spine" ? 3.5 : 2;
+      if (kind === "note") ctx.setLineDash([4, 4]);
+      else if (kind !== "spine") ctx.setLineDash([8, 4]);
+      ctx.beginPath();
+      if (kind === "spine") {
+        const x = from.x + 28;
+        ctx.moveTo(x, from.y + from.h);
+        ctx.lineTo(x, to.y);
+      } else if (kind === "feed") {
+        const x1 = from.x;
+        const y1 = from.y + from.h / 2;
+        const x2 = to.x + to.w;
+        const y2 = to.y + 28;
+        ctx.moveTo(x1, y1);
+        ctx.bezierCurveTo(x1 - 60, y1 + 60, x2 + 60, y2 - 60, x2, y2);
+      } else {
+        const x1 = from.x + from.w;
+        const y1 = from.y + 30;
+        const x2 = to.x;
+        const y2 = to.y + 30;
+        ctx.moveTo(x1, y1);
+        ctx.bezierCurveTo(x1 + 30, y1, x2 - 30, y2, x2, y2);
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawBox(ctx, box) {
+      const { node, x, y, w, h } = box;
+      const selected = selectedId === node.id;
+      const hovered = hoveredId === node.id;
+      const isNote = node.kind === "note";
+      const accent = readAccent(node);
+      ctx.save();
+      traceRoundRect(ctx, x, y, w, h, 10);
+      if (isNote) ctx.fillStyle = selected ? COLORS.noteFillSelected : hovered ? COLORS.noteFillHover : COLORS.noteFill;
+      else ctx.fillStyle = selected ? COLORS.fillSelected : hovered ? COLORS.fillHover : COLORS.base;
+      ctx.fill();
+      if (isNote) ctx.setLineDash([6, 4]);
+      ctx.lineWidth = selected ? 2.5 : hovered ? 2 : 1.2;
+      ctx.strokeStyle = selected ? COLORS.active : hovered ? accent : isNote ? COLORS.note : COLORS.surface0;
+      ctx.stroke();
+      ctx.setLineDash([]);
+      traceRoundRect(ctx, x, y, 6, h, 3);
+      ctx.fillStyle = accent;
+      ctx.fill();
+
+      ctx.font = FONT_BADGE;
+      const badge = truncateText(ctx, `${node.code} ${BOXES[node.status]}`, w * 0.6);
+      const badgeW = ctx.measureText(badge).width + 16;
+      traceRoundRect(ctx, x + 14, y + NODE_PAD, badgeW, BADGE_H, 5);
+      ctx.fillStyle = COLORS.crust;
+      ctx.fill();
+      ctx.fillStyle = accent;
+      ctx.fillText(badge, x + 22, y + NODE_PAD + BADGE_H / 2);
+
+      ctx.font = FONT_TAG;
+      const tag = truncateText(ctx, `line ${node.line}`, w - badgeW - 48);
+      if (tag) {
+        ctx.fillStyle = COLORS.subtext;
+        ctx.fillText(tag, x + w - ctx.measureText(tag).width - NODE_PAD, y + NODE_PAD + BADGE_H / 2);
+      }
+
+      ctx.font = FONT_TITLE;
+      ctx.fillStyle = COLORS.text;
+      box.titleLines.forEach((line, i) => {
+        ctx.fillText(line, x + NODE_PAD, box.titleTop + i * TITLE_LINE_H + TITLE_LINE_H / 2);
+      });
+
+      ctx.font = FONT_PILL;
+      for (const pill of box.pills) {
+        const color = pill.status === "done" ? COLORS.done : pill.status === "active" ? COLORS.active : COLORS.text;
+        traceRoundRect(ctx, pill.x, pill.y, pill.w, PILL_H, 6);
+        ctx.fillStyle = COLORS.crust;
+        ctx.fill();
+        ctx.strokeStyle = pill.status === "open" || pill.status === "none" ? COLORS.surface1 : color;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.fillStyle = color;
+        ctx.fillText(truncateText(ctx, pill.label, pill.w - 16), pill.x + 8, pill.y + PILL_H / 2);
+      }
+
+      if (box.hint) {
+        ctx.font = FONT_HINT;
+        ctx.fillStyle = accent;
+        ctx.fillText(box.hint, x + NODE_PAD, y + h - NODE_PAD - HINT_H / 2);
+      }
+      ctx.restore();
+    }
+
+    function renderInspector() {
+      const panel = document.getElementById("inspector");
+      const node = nodesById.get(selectedId);
+      if (!node) {
+        panel.innerHTML = roadmap.nodes.length ? "<p>Click a box to see all of its text here.</p>" : "";
+        return;
+      }
+      const filter = document.getElementById("filter").value;
+      const branches = filterByStatus(node.branches, filter);
+      const links = branches.map(branch => `
+        <button type="button" class="link" data-id="${branch.id}">
+          <span class="box s-${branch.status}">${escapeHtml(branch.code)} ${BOXES[branch.status]}</span>${escapeHtml(cleanText(branch.title))}
+        </button>`).join("");
+      panel.innerHTML = formatCard(node) + (branches.length ? `<h3>Tasks and notes (${branches.length})</h3>${links}` : "");
+    }
+
+    function showHoverCard(id, clientX, clientY) {
+      const card = document.getElementById("hover-card");
+      const node = id && !drag ? nodesById.get(id) : null;
+      if (!node) {
+        card.classList.add("hidden");
+        return;
+      }
+      card.innerHTML = formatCard(node);
+      card.classList.remove("hidden");
+      const area = document.getElementById("canvas-wrapper").getBoundingClientRect();
+      const relX = clientX - area.left;
+      const relY = clientY - area.top;
+      let left = relX + 20;
+      if (left + card.offsetWidth > area.width - 12) left = Math.max(12, relX - card.offsetWidth - 20);
+      let top = relY - 20;
+      if (top + card.offsetHeight > area.height - 12) top = Math.max(12, area.height - card.offsetHeight - 12);
+      card.style.left = `${left}px`;
+      card.style.top = `${top}px`;
+    }
+
+    function formatCard(node) {
+      const heading = node.kind === "step" ? "Substeps" : "Items";
+      const items = node.items.map(item => `
+        <div class="item" style="margin-left: ${item.depth * 1.25}rem">
+          <span class="box s-${item.status}">${BOXES[item.status]}</span><span>${formatInline(item.text)}</span>
+        </div>`).join("");
+      return `
+        <div class="card-head">
+          <span class="badge s-${node.kind === "step" && node.status === "open" ? "none" : node.status}">${escapeHtml(node.code)} ${BOXES[node.status]}</span>
+          <span class="line-ref">line ${node.line}</span>
+        </div>
+        <h2>${formatInline(node.title)}</h2>
+        ${node.body ? `<p>${formatInline(node.body)}</p>` : ""}
+        ${node.items.length ? `<h3>${heading} (${node.items.length})</h3>${items}` : ""}`;
+    }
+
+    function formatHint(count) {
+      return `${count} ${count === 1 ? "item" : "items"}, hover to read`;
+    }
+
+    function formatInline(text) {
+      return escapeHtml(text)
+        .replace(/`([^`]+)`/g, "<code>$1</code>")
+        .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+        .replace(/(^|[^*])\*([^*\s][^*]*)\*/g, "$1<em>$2</em>")
+        .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (whole, label, href) =>
+          SAFE_HREF.test(href) ? `<a href="${href}" target="_blank" rel="noopener">${label}</a>` : label);
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function cleanText(text) {
+      return text
+        .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+        .replace(/[*`]/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function readPillLabel(text) {
+      const bold = text.match(/^\*\*(.+?)\*\*/);
+      const lead = cleanText(bold ? bold[1] : text);
+      return lead.split(/ \(|: |\. /)[0].replace(/[:.]$/, "");
+    }
+
+    function readAccent(node) {
+      if (node.kind === "note") return COLORS.note;
+      if (node.status === "done") return COLORS.done;
+      if (node.status === "active") return COLORS.active;
+      return node.kind === "step" ? COLORS.step : COLORS.task;
+    }
+
+    function readEdgeColor(edge) {
+      const status = edge.kind === "spine" ? edge.to.node.status : edge.kind === "feed" ? edge.from.node.status : edge.to.node.status;
+      if (edge.kind === "note") return COLORS.note;
+      if (status === "done") return COLORS.done;
+      if (edge.kind === "spine") return status === "active" ? COLORS.active : COLORS.surface2;
+      return COLORS.task;
+    }
+
+    function wrapLines(ctx, text, maxWidth, maxLines) {
+      const words = text.split(" ");
+      const lines = [];
+      let current = "";
+      for (let i = 0; i < words.length; i++) {
+        const candidate = current ? `${current} ${words[i]}` : words[i];
+        if (ctx.measureText(candidate).width <= maxWidth || !current) {
+          current = candidate;
+          continue;
+        }
+        if (lines.length + 1 === maxLines) {
+          lines.push(truncateText(ctx, `${current} ${words.slice(i).join(" ")}`, maxWidth));
+          return lines;
+        }
+        lines.push(current);
+        current = words[i];
+      }
+      if (current) lines.push(truncateText(ctx, current, maxWidth));
+      return lines;
+    }
+
+    function truncateText(ctx, text, maxWidth) {
+      if (ctx.measureText(text).width <= maxWidth) return text;
+      let low = 0;
+      let high = text.length;
+      while (low < high) {
+        const mid = (low + high + 1) >> 1;
+        if (ctx.measureText(`${text.slice(0, mid)}...`).width <= maxWidth) low = mid;
+        else high = mid - 1;
+      }
+      return low > 0 ? `${text.slice(0, low)}...` : "";
+    }
+
+    function traceRoundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.roundRect(x, y, w, h, r);
+    }
+
+    function resizeCanvas() {
+      const area = document.getElementById("canvas-wrapper").getBoundingClientRect();
+      if (!area.width || !area.height) return;
+      const canvas = document.getElementById("canvas");
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.round(area.width * dpr);
+      canvas.height = Math.round(area.height * dpr);
+      buildLayout();
+      drawCanvas();
+    }
+
+    function focusActive() {
+      const target = layout.boxes.find(box => box.node.status === "active")
+        || layout.boxes.find(box => box.node.kind === "step" && box.node.status !== "done")
+        || layout.boxes[0];
+      placeCamera(1);
+      if (target) {
+        const viewH = document.getElementById("canvas-wrapper").getBoundingClientRect().height / zoom;
+        camY = -Math.max(0, Math.min(target.y - 40, layout.height - viewH));
+        selectedId = target.node.id;
+      }
+      renderInspector();
+      drawCanvas();
+    }
+
+    function fitWidth() {
+      const viewW = document.getElementById("canvas-wrapper").getBoundingClientRect().width;
+      placeCamera(Math.min(1, Math.max(MIN_ZOOM, viewW / WORLD_W)));
+    }
+
+    function placeCamera(level) {
+      const viewW = document.getElementById("canvas-wrapper").getBoundingClientRect().width;
+      zoom = level;
+      camX = Math.max(0, (viewW / zoom - WORLD_W) / 2);
+      camY = 0;
+    }
+
+    function selectNode(id) {
+      selectedId = id;
+      renderInspector();
+      drawCanvas();
+    }
+
+    function findBoxAt(clientX, clientY) {
+      const rect = document.getElementById("canvas").getBoundingClientRect();
+      const wx = (clientX - rect.left) / zoom - camX;
+      const wy = (clientY - rect.top) / zoom - camY;
+      for (let i = layout.boxes.length - 1; i >= 0; i--) {
+        const box = layout.boxes[i];
+        if (wx >= box.x && wx <= box.x + box.w && wy >= box.y && wy <= box.y + box.h) return box;
+      }
+      return null;
+    }
+
+    function readFile(file) {
+      const reader = new FileReader();
+      reader.onload = () => showRoadmap(String(reader.result || ""), file.name);
+      reader.readAsText(file, "utf-8");
+    }
+
+    function bindControls() {
+      document.getElementById("filter").addEventListener("change", () => {
+        buildLayout();
+        if (!layout.boxes.some(box => box.node.id === selectedId)) selectedId = layout.boxes[0] ? layout.boxes[0].node.id : null;
+        renderInspector();
+        drawCanvas();
+      });
+      document.getElementById("focus").addEventListener("click", focusActive);
+      document.getElementById("fit").addEventListener("click", () => {
+        fitWidth();
+        drawCanvas();
+      });
+      document.getElementById("branches").addEventListener("click", event => {
+        showBranches = !showBranches;
+        event.currentTarget.setAttribute("aria-pressed", String(showBranches));
+        buildLayout();
+        drawCanvas();
+      });
+      document.getElementById("inspector-toggle").addEventListener("click", event => {
+        const panel = document.getElementById("inspector");
+        panel.classList.toggle("hidden");
+        event.currentTarget.setAttribute("aria-pressed", String(!panel.classList.contains("hidden")));
+        resizeCanvas();
+      });
+      document.getElementById("inspector").addEventListener("click", event => {
+        const link = event.target.closest("[data-id]");
+        if (link) selectNode(link.dataset.id);
+      });
+      document.getElementById("file").addEventListener("change", event => {
+        const file = event.target.files && event.target.files[0];
+        if (file) readFile(file);
+        event.target.value = "";
+      });
+      window.addEventListener("dragover", event => event.preventDefault());
+      window.addEventListener("drop", event => {
+        event.preventDefault();
+        const file = event.dataTransfer && event.dataTransfer.files[0];
+        if (file) readFile(file);
+      });
+      window.addEventListener("resize", resizeCanvas);
+    }
+
+    function bindCanvas() {
+      const canvas = document.getElementById("canvas");
+      canvas.addEventListener("pointerdown", event => {
+        if (event.button !== 0) return;
+        drag = { startX: event.clientX, startY: event.clientY, camX, camY, moved: false };
+        canvas.setPointerCapture(event.pointerId);
+        canvas.classList.add("dragging");
+        showHoverCard(null, 0, 0);
+      });
+      canvas.addEventListener("pointermove", event => {
+        if (drag) {
+          const dx = event.clientX - drag.startX;
+          const dy = event.clientY - drag.startY;
+          if (Math.hypot(dx, dy) >= CLICK_SLOP) drag.moved = true;
+          camX = drag.camX + dx / zoom;
+          camY = drag.camY + dy / zoom;
+          drawCanvas();
+          return;
+        }
+        const box = findBoxAt(event.clientX, event.clientY);
+        const id = box ? box.node.id : null;
+        if (id !== hoveredId) {
+          hoveredId = id;
+          canvas.style.cursor = id ? "pointer" : "";
+          drawCanvas();
+        }
+        showHoverCard(id, event.clientX, event.clientY);
+      });
+      canvas.addEventListener("pointerleave", () => {
+        if (drag || hoveredId === null) return;
+        hoveredId = null;
+        showHoverCard(null, 0, 0);
+        drawCanvas();
+      });
+      const endDrag = event => {
+        if (!drag) return;
+        const clicked = !drag.moved;
+        drag = null;
+        canvas.classList.remove("dragging");
+        if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
+        const box = clicked ? findBoxAt(event.clientX, event.clientY) : null;
+        if (box) selectNode(box.node.id);
+      };
+      canvas.addEventListener("pointerup", endDrag);
+      canvas.addEventListener("pointercancel", endDrag);
+      canvas.addEventListener("wheel", event => {
+        event.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const sx = event.clientX - rect.left;
+        const sy = event.clientY - rect.top;
+        const worldX = sx / zoom - camX;
+        const worldY = sy / zoom - camY;
+        zoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, zoom * (event.deltaY < 0 ? 1.1 : 0.91)));
+        camX = sx / zoom - worldX;
+        camY = sy / zoom - worldY;
+        drawCanvas();
+      }, { passive: false });
+    }
+
+    boot();
+  </script>
+</body>
+</html>
