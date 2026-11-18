@@ -50,7 +50,7 @@ A task, note, before or after marker on a heading applies to every top-level ite
 ## Controls
 
 - The filter keeps all items, the open and active ones, or the done ones. Its last choice keeps the steps with tasks or notes, and the bands.
-- **Focus active** scrolls to the first active item at 100 %, or to the first step left open.
+- **Focus active** scrolls to the first active item at 65 %, or to the first step left open. The page also opens this way.
 - **Fit width** zooms out until both columns fit.
 - **Branches** hides or shows the tasks and notes beside the steps.
 - **Inspector** hides or shows the side panel with the full text of the selected box.

@@ -378,6 +378,7 @@
     const STEP_GAP = 36;
     const GATE_H = 32;
     const GRID_STEP = 36;
+    const OPEN_ZOOM = 0.65;
     const MIN_ZOOM = 0.3;
     const MAX_ZOOM = 2;
     const CLICK_SLOP = 5;
@@ -1012,7 +1013,7 @@
       const target = layout.boxes.find(box => box.node.status === "active")
         || layout.boxes.find(box => box.node.kind === "step" && box.node.status !== "done")
         || layout.boxes[0];
-      placeCamera(1);
+      placeCamera(OPEN_ZOOM);
       if (target) {
         const viewH = document.getElementById("canvas-wrapper").getBoundingClientRect().height / zoom;
         camY = -Math.max(0, Math.min(target.y - 40, layout.height - viewH));
